@@ -2,9 +2,12 @@ package com.example.localnotifications.util
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import com.example.localnotifications.NotificationResponseActivity
 import com.example.localnotifications.R
 
 /**
@@ -29,11 +32,20 @@ class NotificationUtil(private val context: Context) {
      * Function responsible for building Notification.
      */
     fun buildNotification() {
+
+        val intent = Intent(context,NotificationResponseActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+
+        // Pending Intent to open a new activity in future.
+        val pendingIntent = PendingIntent.getActivity(context,0,intent,0)
+
         notificationBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_baseline_directions_bike_24) // Display a small icon on the left side.
             .setContentTitle("Cycling") // Notification Title
             .setContentText("Let take a ride") // Notification Subtitle.
             .setPriority(NotificationCompat.PRIORITY_DEFAULT) // Set the interrupting behaviour by giving priority.
+            .setContentIntent(pendingIntent) // Execute the pending intent when user tap on the notification.
             .setAutoCancel(true) // Dismiss/Cancel the notification on Tap.
     }
 
