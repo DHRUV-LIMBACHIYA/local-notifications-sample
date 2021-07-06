@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Local Notifications</string>
+    <string name="channel_number_one">Channel One</string>
+    <string name="channel_number_one_desc">Hello, this is a channel number one description.</string>
 </resources>
