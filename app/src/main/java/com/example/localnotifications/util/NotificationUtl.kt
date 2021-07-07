@@ -129,6 +129,7 @@ object NotificationUtil {
     fun buildProgressIndicatorNotification(context: Context){
         val maxProgress = 100
         var currentProgress = 0
+
         val progressNotificationBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_baseline_alarm_24)
             .setContentTitle(context.getString(R.string.text_map_route))
@@ -142,6 +143,7 @@ object NotificationUtil {
         // RxJava implementation for updating progress status.
         diposable.add(Observable
             .interval(0,2,TimeUnit.SECONDS)
+            .take(6) // 1 = 20,2 = 40,3 = 60,4 = 80,5 = 100,6 = Complete
             .flatMap {
                 return@flatMap Observable.create<Int> { emitter ->
                     currentProgress += 20
@@ -155,6 +157,7 @@ object NotificationUtil {
                     progressNotificationBuilder.setProgress(maxProgress,progress,false)
                 }else{
                     progressNotificationBuilder.setContentText(context.getString(R.string.text_download_complete))
+                    progressNotificationBuilder.setOngoing(false)
                     progressNotificationBuilder.setProgress(0,0,false) // set 0 - max , 0- current to indicate progress completed.
                 }
                 // Notify the progress
@@ -162,7 +165,6 @@ object NotificationUtil {
             })
 
     }
-
 
     // Get Notification Manager
     fun getNotificationManager(context: Context): NotificationManager {
@@ -182,6 +184,5 @@ object NotificationUtil {
         notificationBuilder = null
         diposable.dispose()
     }
-
 
 }
