@@ -47,4 +47,8 @@ dependencies {
 
     // Dependency for Notification API
     implementation "com.android.support:support-compat:28.0.0"
+
+    // RxJava and RxAndroid
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+    implementation 'io.reactivex.rxjava3:rxjava:3.0.0'
 }

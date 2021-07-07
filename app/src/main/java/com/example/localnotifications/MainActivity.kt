@@ -21,10 +21,14 @@ class MainActivity : AppCompatActivity() {
         mBinding.fireNotificationButton.setOnClickListener {
             NotificationUtil.displayNotification(this) // Fire a notification.
         }
+
+        mBinding.downloadNotificationButton.setOnClickListener {
+            NotificationUtil.buildProgressIndicatorNotification(this)
+        }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onStop() {
+        super.onStop()
         NotificationUtil.clearRes()
     }
 }
