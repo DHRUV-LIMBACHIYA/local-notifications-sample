@@ -143,7 +143,7 @@ object NotificationUtil {
         // RxJava implementation for updating progress status.
         diposable.add(Observable
             .interval(0,2,TimeUnit.SECONDS)
-            .take(6) // 1 = 20,2 = 40,3 = 60,4 = 80,5 = 100,6 = Complete
+            .take(6) // Use take operator to stop interval. 1 = 20,2 = 40,3 = 60,4 = 80,5 = 100,6 = Complete and now stop the interval.
             .flatMap {
                 return@flatMap Observable.create<Int> { emitter ->
                     currentProgress += 20
@@ -157,10 +157,10 @@ object NotificationUtil {
                     progressNotificationBuilder.setProgress(maxProgress,progress,false)
                 }else{
                     progressNotificationBuilder.setContentText(context.getString(R.string.text_download_complete))
-                    progressNotificationBuilder.setOngoing(false)
-                    progressNotificationBuilder.setProgress(0,0,false) // set 0 - max , 0- current to indicate progress completed.
+                    progressNotificationBuilder.setOngoing(false) // User can now dismiss the notification.
+                    progressNotificationBuilder.setProgress(0,0,false) // set 0 - max progess , 0 - current progress to indicate download completed.
                 }
-                // Notify the progress
+                // Notify the progress update.
                 getNotificationManager(context).notify(NOTIFICATION_PROGRESS_INDICATOR, progressNotificationBuilder.build())
             })
 
