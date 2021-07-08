@@ -1,8 +1,13 @@
 <resources>
     <string name="app_name">Local Notifications</string>
     <string name="channel_number_one">Channel One</string>
+    <string name="channel_number_two">Channel Two</string>
     <string name="channel_number_one_desc">Hello, this is a channel number one description.</string>
+    <string name="channel_number_two_desc">Hello, this is a channel number two description.</string>
     <string name="text_downloading">Downloading the route...</string>
     <string name="text_map_route">Map Route</string>
     <string name="text_download_complete">Download Complete</string>
+    <string name="text_expandable_notification">Expandable Notification</string>
+    <string name="text_expandable_notification_subtitle">Expand to view large image</string>
+    <string name="large_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vehicula turpis ligula, eget efficitur lacus faucibus dapibus. Donec sit amet ante augue. Phasellus nibh urna, eleifend nec finibus ac, bibendum ac magna. Donec lacinia nisl vel condimentum hendrerit. Phasellus varius gravida velit in tristique. Ut non leo sit amet diam facilisis ultricies ut in neque. Nunc quis est lacus. Ut venenatis ultricies lorem eget consequat. Aliquam non ipsum eget enim pulvinar viverra. Cras quis nibh eros. Quisque blandit id ipsum a condimentum. Sed rutrum est id pellentesque ullamcorper.</string>
 </resources>
