@@ -15,7 +15,8 @@ import java.util.concurrent.TimeUnit
  * Created by Dhruv Limbachiya on 07-07-2021.
  */
 
-class NotificationActionIntentService(name:String = "NotificationIntentService"): IntentService(name) {
+class NotificationActionIntentService(name: String = "NotificationIntentService") :
+    IntentService(name) {
 
 
     override fun onHandleIntent(intent: Intent?) {
@@ -35,7 +36,6 @@ class NotificationActionIntentService(name:String = "NotificationIntentService")
      * The method is responsible for canceling the active notification and create and fire new notification after snooze time over.
      */
     private fun handleSnoozeAction() {
-
         val notificationManager =
             NotificationUtil.getNotificationManager(this) // Get the NotificationManager
         val _notification: Notification?
@@ -50,12 +50,13 @@ class NotificationActionIntentService(name:String = "NotificationIntentService")
             if (activeNotifications != null && activeNotifications.isNotEmpty()) {
                 for (notification in activeNotifications) {
                     // Cancel the notification if it is active.
-                    if (notification.id == NotificationUtil.NOTIFICATION_ID) {
+                    if (notification.id == NotificationUtil.ACTION_BUTTON_NOTIFICATION_ID) {
                         fireSnoozeNotification(notification.notification, notificationManager)
                     }
                 }
             } else {
-                _notification = reCreateNotification()?.build() // Create a new notification from the scratch.
+                _notification =
+                    reCreateNotification()?.build() // Create a new notification from the scratch.
                 _notification?.let {
                     fireSnoozeNotification(it, notificationManager)
                 }
@@ -83,14 +84,14 @@ class NotificationActionIntentService(name:String = "NotificationIntentService")
         notification: Notification,
         notificationManager: NotificationManager
     ) {
-        notificationManager.cancel(NotificationUtil.NOTIFICATION_ID)
+        notificationManager.cancel(NotificationUtil.ACTION_BUTTON_NOTIFICATION_ID)
         try {
             Thread.sleep(SNOOZE_TIME) // Sleep/Wait for snooze time then fire notification again.
         } catch (e: InterruptedException) {
             Thread.currentThread().interrupt()
         }
 
-        notificationManager.notify(NotificationUtil.NOTIFICATION_ID, notification)
+        notificationManager.notify(NotificationUtil.ACTION_BUTTON_NOTIFICATION_ID, notification)
     }
 
     /**
@@ -106,7 +107,7 @@ class NotificationActionIntentService(name:String = "NotificationIntentService")
      */
     private fun handleDismissAction() {
         val notificationManagerCompat = NotificationManagerCompat.from(applicationContext)
-        notificationManagerCompat.cancel(NotificationUtil.NOTIFICATION_ID)
+        notificationManagerCompat.cancel(NotificationUtil.ACTION_BUTTON_NOTIFICATION_ID)
         Log.i(TAG, "handleDismissAction: Notification Dismissed")
     }
 
