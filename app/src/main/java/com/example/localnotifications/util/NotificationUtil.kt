@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit
 // Step 2 : Create a Notification Channel for Android 8.0 or higher.
 // Step 3: Display Notification.
 
-
 object NotificationUtil {
 
     const val NOTIFICATION_CHANNEL_ID = "CHANNEL_ID_ONE"
@@ -66,7 +65,7 @@ object NotificationUtil {
             val channelDescription =
                 context.getString(R.string.channel_number_one_desc) // Channel Description
             val importance =
-                NotificationManager.IMPORTANCE_DEFAULT  // Channel Interrupting Level or priority.
+                NotificationManager.IMPORTANCE_HIGH  // Channel Interrupting Level or priority.
             val notificationChannel =
                 NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, importance).apply {
                     description = channelDescription // Channel Description [Optional]
@@ -85,7 +84,7 @@ object NotificationUtil {
     }
 
     // Build notification with snooze & dismiss action buttons
-    fun buildNotificationWithActionButtons(context: Context) : NotificationCompat.Builder?{
+    fun buildNotificationWithActionButtons(context: Context): NotificationCompat.Builder? {
         // Snooze Action
         val snoozeIntent = Intent(context, NotificationActionIntentService::class.java).apply {
             action = NotificationActionIntentService.SNOOZE_ACTION
@@ -96,6 +95,9 @@ object NotificationUtil {
             action = NotificationActionIntentService.DISMISS_ACTION
         }
 
+        val fullScreenIntent = Intent(context,NotificationResponseActivity::class.java)
+        val fullScreenPendingIntent = PendingIntent.getActivity(context,0,fullScreenIntent,0)
+
         val snoozePendingIntent = PendingIntent.getService(context, 0, snoozeIntent, 0)
         val dismissPendingIntent = PendingIntent.getService(context, 0, dismissIntent, 0)
 
@@ -103,7 +105,8 @@ object NotificationUtil {
             .setSmallIcon(R.drawable.ic_baseline_directions_bike_24) // Display a small icon on the left side.
             .setContentTitle("Cycling") // Notification Title
             .setContentText("Let take a ride") // Notification Subtitle.
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT) // Set the interrupting behaviour by giving priority.
+            .setPriority(NotificationCompat.PRIORITY_HIGH) // Set the interrupting behaviour by giving priority.
+            .setFullScreenIntent(fullScreenPendingIntent,true)
             .addAction(
                 NotificationCompat.Action(
                     R.drawable.ic_baseline_alarm_24,
@@ -126,23 +129,27 @@ object NotificationUtil {
     }
 
     // Build and fire an progress indicator Notification.
-    fun buildProgressIndicatorNotification(context: Context){
+    fun buildProgressIndicatorNotification(context: Context) {
         val maxProgress = 100
         var currentProgress = 0
 
-        val progressNotificationBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_baseline_alarm_24)
-            .setContentTitle(context.getString(R.string.text_map_route))
-            .setContentText(context.getString(R.string.text_downloading))
-            .setOngoing(true) // Ongoing notifications cannot be dismissed by the user
-            .setProgress(maxProgress,currentProgress,true)
+        val progressNotificationBuilder =
+            NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_baseline_alarm_24)
+                .setContentTitle(context.getString(R.string.text_map_route))
+                .setContentText(context.getString(R.string.text_downloading))
+                .setOngoing(true) // Ongoing notifications cannot be dismissed by the user
+                .setProgress(maxProgress, currentProgress, true)
 
         // Initial notification
-        getNotificationManager(context).notify(NOTIFICATION_PROGRESS_INDICATOR, progressNotificationBuilder.build())
+        getNotificationManager(context).notify(
+            NOTIFICATION_PROGRESS_INDICATOR,
+            progressNotificationBuilder.build()
+        )
 
         // RxJava implementation for updating progress status.
         diposable.add(Observable
-            .interval(0,2,TimeUnit.SECONDS)
+            .interval(0, 2, TimeUnit.SECONDS)
             .take(6) // Use take operator to stop interval. 1 = 20,2 = 40,3 = 60,4 = 80,5 = 100,6 = Complete and now stop the interval.
             .flatMap {
                 return@flatMap Observable.create<Int> { emitter ->
@@ -150,18 +157,25 @@ object NotificationUtil {
                     emitter.onNext(currentProgress)
                 }
             }
-            .delay(2,TimeUnit.SECONDS)
-            .subscribe  { progress ->
-                if(progress <= maxProgress){
+            .delay(2, TimeUnit.SECONDS)
+            .subscribe { progress ->
+                if (progress <= maxProgress) {
                     progressNotificationBuilder.setContentText("Progress : $progress%")
-                    progressNotificationBuilder.setProgress(maxProgress,progress,false)
-                }else{
+                    progressNotificationBuilder.setProgress(maxProgress, progress, false)
+                } else {
                     progressNotificationBuilder.setContentText(context.getString(R.string.text_download_complete))
                     progressNotificationBuilder.setOngoing(false) // User can now dismiss the notification.
-                    progressNotificationBuilder.setProgress(0,0,false) // set 0 - max progess , 0 - current progress to indicate download completed.
+                    progressNotificationBuilder.setProgress(
+                        0,
+                        0,
+                        false
+                    ) // set 0 - max progess , 0 - current progress to indicate download completed.
                 }
                 // Notify the progress update.
-                getNotificationManager(context).notify(NOTIFICATION_PROGRESS_INDICATOR, progressNotificationBuilder.build())
+                getNotificationManager(context).notify(
+                    NOTIFICATION_PROGRESS_INDICATOR,
+                    progressNotificationBuilder.build()
+                )
             })
 
     }
