@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.localnotifications">
 
-    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
     <application
         android:allowBackup="true"
@@ -12,12 +12,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LocalNotifications">
+
+        <!--Parent Activity-->
         <activity
-            android:name=".NotificationResponseActivity"
-            android:exported="true" />
-        <activity
-            android:name=".MainActivity"
-            android:showOnLockScreen="true"
+            android:name=".ui.MainActivity"
             android:exported="true"
             tools:ignore="UnusedAttribute">
             <intent-filter>
@@ -27,9 +25,22 @@
             </intent-filter>
         </activity>
 
+        <!--Special Activity for Notification-->
+        <activity
+            android:name=".ui.NotificationSpecialActivity"
+            android:exported="true"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"/>
+
+        <!--Regular Activity-->
+        <activity
+            android:name=".ui.RegularActivity"
+            android:exported="true"
+            android:parentActivityName=".ui.MainActivity"/>
+
         <service
             android:name=".actionhandler.NotificationActionIntentService"
-            android:exported="false"/>
+            android:exported="false" />
 
     </application>
 

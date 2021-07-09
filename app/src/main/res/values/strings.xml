@@ -11,4 +11,6 @@
     <string name="text_expandable_notification_subtitle">Expand to view large image</string>
     <string name="large_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vehicula turpis ligula, eget efficitur lacus faucibus dapibus. Donec sit amet ante augue. Phasellus nibh urna, eleifend nec finibus ac, bibendum ac magna. Donec lacinia nisl vel condimentum hendrerit. Phasellus varius gravida velit in tristique. Ut non leo sit amet diam facilisis ultricies ut in neque. Nunc quis est lacus. Ut venenatis ultricies lorem eget consequat. Aliquam non ipsum eget enim pulvinar viverra. Cras quis nibh eros. Quisque blandit id ipsum a condimentum. Sed rutrum est id pellentesque ullamcorper.</string>
     <string name="text_select_notification">Select Notification</string>
+    <string name="text_regular_activity">Regular Activity</string>
+    <string name="text_special_activity">Special Activity</string>
 </resources>

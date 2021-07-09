@@ -1,4 +1,4 @@
-package com.example.localnotifications
+package com.example.localnotifications.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

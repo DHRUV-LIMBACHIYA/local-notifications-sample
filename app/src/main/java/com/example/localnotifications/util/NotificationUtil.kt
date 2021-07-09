@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -14,6 +15,8 @@ import androidx.core.app.NotificationCompat
 import com.example.localnotifications.NotificationResponseActivity
 import com.example.localnotifications.R
 import com.example.localnotifications.actionhandler.NotificationActionIntentService
+import com.example.localnotifications.ui.NotificationSpecialActivity
+import com.example.localnotifications.ui.RegularActivity
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit
@@ -38,14 +41,9 @@ object NotificationUtil {
     const val MEDIA_STYLE_NOTIFICATION_ID = 7
 
     // Notification Channels
-    const val SIMPLE_NOTIFICATION_CHANNEL = "CHANNEL_ID_ONE"
-    const val EXPANDABLE_NOTIFICATION_CHANNEL = "CHANNEL_ID_TWO"
+    private const val SIMPLE_NOTIFICATION_CHANNEL = "CHANNEL_ID_ONE"
+    private const val EXPANDABLE_NOTIFICATION_CHANNEL = "CHANNEL_ID_TWO"
 
-//    const val NOTIFICATION_EXPANDABLE_ID = 103
-//    private const val NOTIFICATION_CHANNEL_ID_TWO = "CHANNEL_ID_TWO"
-//    private const val NOTIFICATION_CHANNEL_ID = "CHANNEL_ID_ONE"
-//    const val NOTIFICATION_ID = 101
-//    private const val NOTIFICATION_PROGRESS_INDICATOR = 102
 
     private val diposable = CompositeDisposable()
 
@@ -57,11 +55,22 @@ object NotificationUtil {
      * Function responsible for building Notification.
      */
     fun buildNotification(context: Context) {
-        val intent = Intent(context, NotificationResponseActivity::class.java).apply {
+        // Pending Intent to open a new activity in future.
+        // Create a pending intent with back stack for regular activities(normal flows).
+        val regularIntent = Intent(context,RegularActivity::class.java)
+
+        // Create a special pending intent without back stack.
+        // This intent will open activity in new task.
+        val specialIntent = Intent(context,NotificationSpecialActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        // Pending Intent to open a new activity in future.
-        val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+
+        val regularPendingIntent = TaskStackBuilder.create(context).run {
+            addNextIntentWithParentStack(regularIntent)
+            getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT)
+        }
+
+        val specialPendingIntent = PendingIntent.getActivity(context,0,specialIntent,PendingIntent.FLAG_UPDATE_CURRENT)
 
         notificationBuilder = NotificationCompat.Builder(context, SIMPLE_NOTIFICATION_CHANNEL)
             .setSmallIcon(R.drawable.ic_baseline_directions_bike_24) // Display a small icon on the left side.
@@ -69,7 +78,8 @@ object NotificationUtil {
             .setContentText("Let take a ride") // Notification Subtitle.
             .setPriority(NotificationCompat.PRIORITY_DEFAULT) // Set the interrupting behaviour by giving priority.
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setContentIntent(pendingIntent) // Execute the pending intent when user tap on the notification.
+            .setContentIntent(specialPendingIntent) // Open an activity on new task.
+//            .setContentIntent(regularPendingIntent) // Open an activity on existing task
             .setAutoCancel(true) // Dismiss/Cancel the notification on Tap.
     }
 
