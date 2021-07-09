@@ -1,10 +1,7 @@
 package com.example.localnotifications.util
 
 import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.TaskStackBuilder
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -41,12 +38,18 @@ object NotificationUtil {
     const val MEDIA_STYLE_NOTIFICATION_ID = 7
 
     // Notification Channels
-    private const val SIMPLE_NOTIFICATION_CHANNEL = "CHANNEL_ID_ONE"
+    const val SIMPLE_NOTIFICATION_CHANNEL = "CHANNEL_ID_ONE"
     private const val EXPANDABLE_NOTIFICATION_CHANNEL = "CHANNEL_ID_TWO"
 
-    // Group
+    // Notification Group
     const val GROUP_SUMMARY_ID = 0
     const val GROUP_NAME = "com.example.localnotifications.GROUP_NOTIFICATIONS"
+
+    // Notification Channel Group
+    const val CHANNEL_GROUP_ID_ONE = "channel_group_id_1"
+    const val CHANNEL_GROUP_ID_TWO = "channel_group_id_2"
+    const val CHANNEL_GROUP_ONE = "Important"
+    const val CHANNEL_GROUP_TWO = "Not Important"
 
     private val diposable = CompositeDisposable()
 
@@ -103,9 +106,17 @@ object NotificationUtil {
                 NotificationChannel(SIMPLE_NOTIFICATION_CHANNEL, channelName, importance).apply {
                     description = channelDescription // Channel Description [Optional]
                     lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
+                    group = CHANNEL_GROUP_ID_ONE
                 }
 
             Log.i("TAG", "createNotificationChannel: ${notificationChannel.lockscreenVisibility}")
+
+            // Create a notification channel group
+            getNotificationManager(context).createNotificationChannelGroup(
+                NotificationChannelGroup(
+                    CHANNEL_GROUP_ID_ONE, CHANNEL_GROUP_ONE
+                )
+            )
 
             // Register the channel with system.
             getNotificationManager(context).createNotificationChannel(notificationChannel)
@@ -321,7 +332,15 @@ object NotificationUtil {
                     importance
                 ).apply {
                     description = channelDescription // Channel Description [Optional]
+                    group = CHANNEL_GROUP_ID_TWO // specify which group this notification channel belongs to
                 }
+
+            // Create a notification channel group
+            getNotificationManager(context).createNotificationChannelGroup(
+                NotificationChannelGroup(
+                    CHANNEL_GROUP_ID_TWO, CHANNEL_GROUP_TWO
+                )
+            )
 
             // Register the channel with system.
             getNotificationManager(context).createNotificationChannel(notificationChannel)
@@ -331,19 +350,22 @@ object NotificationUtil {
     /**
      * Create a group summary notification
      */
-    fun buildGroupSummaryNotification(context: Context){
-        notificationBuilder = NotificationCompat.Builder(context, SIMPLE_NOTIFICATION_CHANNEL).apply {
-            setContentTitle("Group Summary Title")
-            setContentText("Group Summary")
-            setSmallIcon(R.drawable.ic_like)
-            setStyle(NotificationCompat.InboxStyle()
-                .addLine("Line number 1")
-                .addLine("Line number 2")
-                .setBigContentTitle("This is big content title")
-                .setSummaryText("This is a summary text"))
-            setGroup(GROUP_NAME) //specify which group this notification belongs to
-            setGroupSummary(true) //set this notification as the summary for the group
-        }
+    fun buildGroupSummaryNotification(context: Context) {
+        notificationBuilder =
+            NotificationCompat.Builder(context, SIMPLE_NOTIFICATION_CHANNEL).apply {
+                setContentTitle("Group Summary Title")
+                setContentText("Group Summary")
+                setSmallIcon(R.drawable.ic_like)
+                setStyle(
+                    NotificationCompat.InboxStyle()
+                        .addLine("Line number 1")
+                        .addLine("Line number 2")
+                        .setBigContentTitle("This is big content title")
+                        .setSummaryText("This is a summary text")
+                )
+                setGroup(GROUP_NAME) //specify which group this notification belongs to
+                setGroupSummary(true) //set this notification as the summary for the group
+            }
     }
 
 
