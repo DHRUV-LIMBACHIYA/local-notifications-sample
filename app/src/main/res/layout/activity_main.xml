@@ -6,14 +6,120 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/fireNotificationButton"
+    <TextView
+        android:id="@+id/notification_type_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Fire A Notification!"
+        android:layout_marginTop="@dimen/margin_sixteen"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:text="@string/text_select_notification"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <RadioGroup
+        android:id="@+id/notification_type_radioGroup"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="@dimen/margin_sixteen"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/notification_type_textview">
+
+        <!--Radio Button for basic notification-->
+        <RadioButton
+            android:id="@+id/basic_notification_radio_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Basic Notification"/>
+
+        <!--Radio Button for notification with action buttons-->
+        <RadioButton
+            android:id="@+id/action_button_notification_radio_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Notification with Action buttons"/>
+
+        <!--Radio Button for notification with progress indicator-->
+        <RadioButton
+            android:id="@+id/progress_indicator_notification_radio_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Notification with Progress indicator"/>
+
+        <!--Radio Button for BigPictureStyle notification-->
+        <RadioButton
+            android:id="@+id/big_picture_style_notification_radio_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Big Picture Style Notification"/>
+
+        <!--Radio Button for BigTextStyle notification-->
+        <RadioButton
+            android:id="@+id/big_text_style_notification_radio_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Big Text Style Notification"/>
+
+        <!--Radio Button for InboxStyle notification-->
+        <RadioButton
+            android:id="@+id/inbox_style_notification_radio_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Inbox Style Notification"/>
+
+        <!--Radio Button for InboxStyle notification-->
+        <RadioButton
+            android:id="@+id/media_style_notification_radio_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Media Style Notification"/>
+
+    </RadioGroup>
+
+
+    <Button
+        android:id="@+id/fire_notification_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fire Notification"
+        android:textAllCaps="false"
+        android:layout_gravity="center"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/notification_type_radioGroup" />
+
+
+   <!-- <Button
+        android:id="@+id/fire_basic_notification_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fire Basic Notification"
+        android:textAllCaps="false"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/margin_fifty"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/download_notification_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Download Route"
+        android:textAllCaps="false"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/margin_sixteen" />
+
+    <Button
+        android:id="@+id/expandable_notification_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fire expandable notification"
+        android:textAllCaps="false"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/margin_sixteen" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
