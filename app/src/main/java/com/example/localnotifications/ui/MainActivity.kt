@@ -1,7 +1,12 @@
-package com.example.localnotifications
+package com.example.localnotifications.ui
 
+import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import com.example.localnotifications.R
 import com.example.localnotifications.databinding.ActivityMainBinding
 import com.example.localnotifications.util.NotificationUtil
 
@@ -53,6 +58,10 @@ class MainActivity : AppCompatActivity() {
                     NotificationUtil.buildExpandableNotification(this,3)
                     notificationId = NotificationUtil.MEDIA_STYLE_NOTIFICATION_ID
                 }
+                mBinding.customNotificationRadioButton.id -> {
+                    NotificationUtil.buildCustomNotification(this)
+                    notificationId = NotificationUtil.CUSTOM_NOTIFICATION_ID
+                }
             }
 
         }
@@ -64,6 +73,28 @@ class MainActivity : AppCompatActivity() {
                 NotificationUtil.displayNotification(this,notificationId) // Fire notification according notification id.
             }
         }
+
+        mBinding.groupNotificationButton.setOnClickListener {
+            NotificationUtil.buildGroupSummaryNotification(this)
+            NotificationUtil.displayNotification(this,NotificationUtil.GROUP_SUMMARY_ID)
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.settings_menu,menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if(item.itemId == R.id.action_setting){
+            // Open notification channel settings
+            val settingIntent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                putExtra(Settings.EXTRA_APP_PACKAGE,application.packageName)
+                putExtra(Settings.EXTRA_CHANNEL_ID,NotificationUtil.SIMPLE_NOTIFICATION_CHANNEL)
+            }
+            startActivity(settingIntent)
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onDestroy() {

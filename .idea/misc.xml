@@ -5,6 +5,13 @@
       <map>
         <entry key="..\:/Android Projects/LocalNotifications/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/Android Projects/LocalNotifications/app/src/main/res/layout/activity_notification_response.xml" value="0.19322916666666667" />
+        <entry key="..\:/Android Projects/LocalNotifications/app/src/main/res/layout/activity_notification_special.xml" value="0.19322916666666667" />
+        <entry key="..\:/Android Projects/LocalNotifications/app/src/main/res/layout/activity_regular.xml" value="0.20625" />
+        <entry key="..\:/Android Projects/LocalNotifications/app/src/main/res/layout/collapsed_notification_layout.xml" value="0.20625" />
+        <entry key="..\:/Android Projects/LocalNotifications/app/src/main/res/layout/custom_collapsed_notification.xml" value="0.20625" />
+        <entry key="..\:/Android Projects/LocalNotifications/app/src/main/res/layout/custom_expandable_notification_layout.xml" value="0.1" />
+        <entry key="..\:/Android Projects/LocalNotifications/app/src/main/res/layout/expandable_notification_layout.xml" value="0.20625" />
+        <entry key="..\:/Android Projects/LocalNotifications/app/src/main/res/menu/settings_menu.xml" value="0.20625" />
       </map>
     </option>
   </component>

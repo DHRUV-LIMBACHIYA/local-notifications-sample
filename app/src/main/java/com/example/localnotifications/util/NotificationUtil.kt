@@ -1,19 +1,20 @@
 package com.example.localnotifications.util
 
 import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.example.localnotifications.NotificationResponseActivity
 import com.example.localnotifications.R
 import com.example.localnotifications.actionhandler.NotificationActionIntentService
+import com.example.localnotifications.ui.NotificationSpecialActivity
+import com.example.localnotifications.ui.RegularActivity
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit
@@ -36,16 +37,21 @@ object NotificationUtil {
     const val BIG_TEXT_STYLE_NOTIFICATION_ID = 5
     const val INBOX_STYLE_NOTIFICATION_ID = 6
     const val MEDIA_STYLE_NOTIFICATION_ID = 7
+    const val CUSTOM_NOTIFICATION_ID = 8
 
     // Notification Channels
     const val SIMPLE_NOTIFICATION_CHANNEL = "CHANNEL_ID_ONE"
-    const val EXPANDABLE_NOTIFICATION_CHANNEL = "CHANNEL_ID_TWO"
+    private const val EXPANDABLE_NOTIFICATION_CHANNEL = "CHANNEL_ID_TWO"
 
-//    const val NOTIFICATION_EXPANDABLE_ID = 103
-//    private const val NOTIFICATION_CHANNEL_ID_TWO = "CHANNEL_ID_TWO"
-//    private const val NOTIFICATION_CHANNEL_ID = "CHANNEL_ID_ONE"
-//    const val NOTIFICATION_ID = 101
-//    private const val NOTIFICATION_PROGRESS_INDICATOR = 102
+    // Notification Group
+    const val GROUP_SUMMARY_ID = 0
+    const val GROUP_NAME = "com.example.localnotifications.GROUP_NOTIFICATIONS"
+
+    // Notification Channel Group
+    const val CHANNEL_GROUP_ID_ONE = "channel_group_id_1"
+    const val CHANNEL_GROUP_ID_TWO = "channel_group_id_2"
+    const val CHANNEL_GROUP_ONE = "Important"
+    const val CHANNEL_GROUP_TWO = "Not Important"
 
     private val diposable = CompositeDisposable()
 
@@ -57,11 +63,23 @@ object NotificationUtil {
      * Function responsible for building Notification.
      */
     fun buildNotification(context: Context) {
-        val intent = Intent(context, NotificationResponseActivity::class.java).apply {
+        // Pending Intent to open a new activity in future.
+        // Create a pending intent with back stack for regular activities(normal flows).
+        val regularIntent = Intent(context, RegularActivity::class.java)
+
+        // Create a special pending intent without back stack.
+        // This intent will open activity in new task.
+        val specialIntent = Intent(context, NotificationSpecialActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        // Pending Intent to open a new activity in future.
-        val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+
+        val regularPendingIntent = TaskStackBuilder.create(context).run {
+            addNextIntentWithParentStack(regularIntent)
+            getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
+        }
+
+        val specialPendingIntent =
+            PendingIntent.getActivity(context, 0, specialIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         notificationBuilder = NotificationCompat.Builder(context, SIMPLE_NOTIFICATION_CHANNEL)
             .setSmallIcon(R.drawable.ic_baseline_directions_bike_24) // Display a small icon on the left side.
@@ -69,8 +87,11 @@ object NotificationUtil {
             .setContentText("Let take a ride") // Notification Subtitle.
             .setPriority(NotificationCompat.PRIORITY_DEFAULT) // Set the interrupting behaviour by giving priority.
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setContentIntent(pendingIntent) // Execute the pending intent when user tap on the notification.
+            .setContentIntent(specialPendingIntent) // Open an activity on new task.
+//            .setContentIntent(regularPendingIntent) // Open an activity on existing task
             .setAutoCancel(true) // Dismiss/Cancel the notification on Tap.
+            .setGroup(GROUP_NAME) //specify which group this notification belongs to
+            .setNumber(10) // specify badge number
     }
 
     /**
@@ -88,9 +109,18 @@ object NotificationUtil {
                 NotificationChannel(SIMPLE_NOTIFICATION_CHANNEL, channelName, importance).apply {
                     description = channelDescription // Channel Description [Optional]
                     lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
+                    group = CHANNEL_GROUP_ID_ONE
+                    setShowBadge(true)
                 }
 
             Log.i("TAG", "createNotificationChannel: ${notificationChannel.lockscreenVisibility}")
+
+            // Create a notification channel group
+            getNotificationManager(context).createNotificationChannelGroup(
+                NotificationChannelGroup(
+                    CHANNEL_GROUP_ID_ONE, CHANNEL_GROUP_ONE
+                )
+            )
 
             // Register the channel with system.
             getNotificationManager(context).createNotificationChannel(notificationChannel)
@@ -144,6 +174,7 @@ object NotificationUtil {
                 )
             ) // Add Dismiss action button.
             .setAutoCancel(true) // Dismiss/Cancel the notification on Tap.
+            .setGroup(GROUP_NAME) //specify which group this notification belongs to
 
         setNotificationBuilderInstance(notificationBuilder!!)
 
@@ -162,6 +193,7 @@ object NotificationUtil {
                 .setContentText(context.getString(R.string.text_downloading))
                 .setOngoing(true) // Ongoing notifications cannot be dismissed by the user
                 .setProgress(maxProgress, currentProgress, true)
+                .setGroup(GROUP_NAME) //specify which group this notification belongs to
 
         // Initial notification
         getNotificationManager(context).notify(
@@ -237,6 +269,7 @@ object NotificationUtil {
                     }
                 )
                 setLargeIcon(bitmap) // Add thumbnail icon on right side of the notification
+                setGroup(GROUP_NAME) //specify which group this notification belongs to
                 setStyle(
                     when (notificationStyleIndex) {
                         0 -> {
@@ -303,12 +336,57 @@ object NotificationUtil {
                     importance
                 ).apply {
                     description = channelDescription // Channel Description [Optional]
+                    group = CHANNEL_GROUP_ID_TWO // specify which group this notification channel belongs to
                 }
+
+            // Create a notification channel group
+            getNotificationManager(context).createNotificationChannelGroup(
+                NotificationChannelGroup(
+                    CHANNEL_GROUP_ID_TWO, CHANNEL_GROUP_TWO
+                )
+            )
 
             // Register the channel with system.
             getNotificationManager(context).createNotificationChannel(notificationChannel)
         }
     }
+
+    /**
+     * Create a group summary notification
+     */
+    fun buildGroupSummaryNotification(context: Context) {
+        notificationBuilder =
+            NotificationCompat.Builder(context, SIMPLE_NOTIFICATION_CHANNEL).apply {
+                setContentTitle("Group Summary Title")
+                setContentText("Group Summary")
+                setSmallIcon(R.drawable.ic_like)
+                setStyle(
+                    NotificationCompat.InboxStyle()
+                        .addLine("Line number 1")
+                        .addLine("Line number 2")
+                        .setBigContentTitle("This is big content title")
+                        .setSummaryText("This is a summary text")
+                )
+                setGroup(GROUP_NAME) //specify which group this notification belongs to
+                setGroupSummary(true) //set this notification as the summary for the group
+            }
+    }
+
+
+    // Build custom notification by inflating layouts.
+    fun buildCustomNotification(context:Context){
+        // Inflate layout using RemoteView instance.
+        val customCollapseView = RemoteViews(context.packageName,R.layout.custom_collapsed_notification_layout) // Inflating custom layout for collapsed notification.
+        val customExpandableView = RemoteViews(context.packageName,R.layout.custom_expandable_notification_layout) // Inflating custom layout for expandable notification.
+
+        notificationBuilder = NotificationCompat.Builder(context, EXPANDABLE_NOTIFICATION_CHANNEL).apply {
+            setSmallIcon(R.drawable.ic_baseline_directions_bike_24)
+            setStyle(NotificationCompat.DecoratedCustomViewStyle())
+            setCustomContentView(customCollapseView)
+            setCustomBigContentView(customExpandableView)
+        }
+    }
+
 
     /**
      * This section contains utility methods
