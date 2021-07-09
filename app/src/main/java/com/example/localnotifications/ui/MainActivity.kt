@@ -64,6 +64,11 @@ class MainActivity : AppCompatActivity() {
                 NotificationUtil.displayNotification(this,notificationId) // Fire notification according notification id.
             }
         }
+
+        mBinding.groupNotificationButton.setOnClickListener {
+            NotificationUtil.buildGroupSummaryNotification(this)
+            NotificationUtil.displayNotification(this,NotificationUtil.GROUP_SUMMARY_ID)
+        }
     }
 
     override fun onDestroy() {

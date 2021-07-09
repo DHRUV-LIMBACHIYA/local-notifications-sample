@@ -44,6 +44,9 @@ object NotificationUtil {
     private const val SIMPLE_NOTIFICATION_CHANNEL = "CHANNEL_ID_ONE"
     private const val EXPANDABLE_NOTIFICATION_CHANNEL = "CHANNEL_ID_TWO"
 
+    // Group
+    const val GROUP_SUMMARY_ID = 0
+    const val GROUP_NAME = "com.example.localnotifications.GROUP_NOTIFICATIONS"
 
     private val diposable = CompositeDisposable()
 
@@ -57,20 +60,21 @@ object NotificationUtil {
     fun buildNotification(context: Context) {
         // Pending Intent to open a new activity in future.
         // Create a pending intent with back stack for regular activities(normal flows).
-        val regularIntent = Intent(context,RegularActivity::class.java)
+        val regularIntent = Intent(context, RegularActivity::class.java)
 
         // Create a special pending intent without back stack.
         // This intent will open activity in new task.
-        val specialIntent = Intent(context,NotificationSpecialActivity::class.java).apply {
+        val specialIntent = Intent(context, NotificationSpecialActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
 
         val regularPendingIntent = TaskStackBuilder.create(context).run {
             addNextIntentWithParentStack(regularIntent)
-            getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT)
+            getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
         }
 
-        val specialPendingIntent = PendingIntent.getActivity(context,0,specialIntent,PendingIntent.FLAG_UPDATE_CURRENT)
+        val specialPendingIntent =
+            PendingIntent.getActivity(context, 0, specialIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         notificationBuilder = NotificationCompat.Builder(context, SIMPLE_NOTIFICATION_CHANNEL)
             .setSmallIcon(R.drawable.ic_baseline_directions_bike_24) // Display a small icon on the left side.
@@ -81,6 +85,7 @@ object NotificationUtil {
             .setContentIntent(specialPendingIntent) // Open an activity on new task.
 //            .setContentIntent(regularPendingIntent) // Open an activity on existing task
             .setAutoCancel(true) // Dismiss/Cancel the notification on Tap.
+            .setGroup(GROUP_NAME) //specify which group this notification belongs to
     }
 
     /**
@@ -154,6 +159,7 @@ object NotificationUtil {
                 )
             ) // Add Dismiss action button.
             .setAutoCancel(true) // Dismiss/Cancel the notification on Tap.
+            .setGroup(GROUP_NAME) //specify which group this notification belongs to
 
         setNotificationBuilderInstance(notificationBuilder!!)
 
@@ -172,6 +178,7 @@ object NotificationUtil {
                 .setContentText(context.getString(R.string.text_downloading))
                 .setOngoing(true) // Ongoing notifications cannot be dismissed by the user
                 .setProgress(maxProgress, currentProgress, true)
+                .setGroup(GROUP_NAME) //specify which group this notification belongs to
 
         // Initial notification
         getNotificationManager(context).notify(
@@ -247,6 +254,7 @@ object NotificationUtil {
                     }
                 )
                 setLargeIcon(bitmap) // Add thumbnail icon on right side of the notification
+                setGroup(GROUP_NAME) //specify which group this notification belongs to
                 setStyle(
                     when (notificationStyleIndex) {
                         0 -> {
@@ -319,6 +327,25 @@ object NotificationUtil {
             getNotificationManager(context).createNotificationChannel(notificationChannel)
         }
     }
+
+    /**
+     * Create a group summary notification
+     */
+    fun buildGroupSummaryNotification(context: Context){
+        notificationBuilder = NotificationCompat.Builder(context, SIMPLE_NOTIFICATION_CHANNEL).apply {
+            setContentTitle("Group Summary Title")
+            setContentText("Group Summary")
+            setSmallIcon(R.drawable.ic_like)
+            setStyle(NotificationCompat.InboxStyle()
+                .addLine("Line number 1")
+                .addLine("Line number 2")
+                .setBigContentTitle("This is big content title")
+                .setSummaryText("This is a summary text"))
+            setGroup(GROUP_NAME) //specify which group this notification belongs to
+            setGroupSummary(true) //set this notification as the summary for the group
+        }
+    }
+
 
     /**
      * This section contains utility methods
