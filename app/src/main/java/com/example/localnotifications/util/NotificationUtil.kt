@@ -89,6 +89,7 @@ object NotificationUtil {
 //            .setContentIntent(regularPendingIntent) // Open an activity on existing task
             .setAutoCancel(true) // Dismiss/Cancel the notification on Tap.
             .setGroup(GROUP_NAME) //specify which group this notification belongs to
+            .setNumber(10) // specify badge number
     }
 
     /**
@@ -107,6 +108,7 @@ object NotificationUtil {
                     description = channelDescription // Channel Description [Optional]
                     lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
                     group = CHANNEL_GROUP_ID_ONE
+                    setShowBadge(true)
                 }
 
             Log.i("TAG", "createNotificationChannel: ${notificationChannel.lockscreenVisibility}")
