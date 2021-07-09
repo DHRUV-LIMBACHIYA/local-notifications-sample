@@ -76,6 +76,13 @@
             android:layout_height="wrap_content"
             android:text="Media Style Notification"/>
 
+        <!--Radio Button for Custom notification-->
+        <RadioButton
+            android:id="@+id/custom_notification_radio_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Custom Notification"/>
+
     </RadioGroup>
 
 
@@ -103,6 +110,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fire_notification_button" />
+
+
 
 
     <!-- <Button

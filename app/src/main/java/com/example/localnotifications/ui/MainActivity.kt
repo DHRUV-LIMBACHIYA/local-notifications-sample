@@ -58,6 +58,10 @@ class MainActivity : AppCompatActivity() {
                     NotificationUtil.buildExpandableNotification(this,3)
                     notificationId = NotificationUtil.MEDIA_STYLE_NOTIFICATION_ID
                 }
+                mBinding.customNotificationRadioButton.id -> {
+                    NotificationUtil.buildCustomNotification(this)
+                    notificationId = NotificationUtil.CUSTOM_NOTIFICATION_ID
+                }
             }
 
         }

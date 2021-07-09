@@ -2,4 +2,7 @@
 <resources>
     <dimen name="margin_sixteen">16dp</dimen>
     <dimen name="margin_fifty">50dp</dimen>
+    <dimen name="height_sixty_four">64dp</dimen>
+    <dimen name="height_two_hundred_fifty_six">256dp</dimen>
+    <dimen name="margin_eight">8dp</dimen>
 </resources>

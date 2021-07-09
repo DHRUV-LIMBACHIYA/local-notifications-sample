@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.example.localnotifications.NotificationResponseActivity
 import com.example.localnotifications.R
@@ -36,6 +37,7 @@ object NotificationUtil {
     const val BIG_TEXT_STYLE_NOTIFICATION_ID = 5
     const val INBOX_STYLE_NOTIFICATION_ID = 6
     const val MEDIA_STYLE_NOTIFICATION_ID = 7
+    const val CUSTOM_NOTIFICATION_ID = 8
 
     // Notification Channels
     const val SIMPLE_NOTIFICATION_CHANNEL = "CHANNEL_ID_ONE"
@@ -368,6 +370,21 @@ object NotificationUtil {
                 setGroup(GROUP_NAME) //specify which group this notification belongs to
                 setGroupSummary(true) //set this notification as the summary for the group
             }
+    }
+
+
+    // Build custom notification by inflating layouts.
+    fun buildCustomNotification(context:Context){
+        // Inflate layout using RemoteView instance.
+        val customCollapseView = RemoteViews(context.packageName,R.layout.custom_collapsed_notification_layout) // Inflating custom layout for collapsed notification.
+        val customExpandableView = RemoteViews(context.packageName,R.layout.custom_expandable_notification_layout) // Inflating custom layout for expandable notification.
+
+        notificationBuilder = NotificationCompat.Builder(context, EXPANDABLE_NOTIFICATION_CHANNEL).apply {
+            setSmallIcon(R.drawable.ic_baseline_directions_bike_24)
+            setStyle(NotificationCompat.DecoratedCustomViewStyle())
+            setCustomContentView(customCollapseView)
+            setCustomBigContentView(customExpandableView)
+        }
     }
 
 
